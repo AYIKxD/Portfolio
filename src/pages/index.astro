@@ -1,0 +1,239 @@
+---
+import Header from '../components/Header.astro'
+import Hero from '../components/Hero.astro'
+import About from '../components/About.astro'
+import Philosophy from '../components/Philosophy.astro'
+import TheLab from '../components/TheLab.astro'
+import GitHubHeatmap from '../components/GitHubHeatmap.astro'
+import KernelLogs from '../components/KernelLogs.astro'
+import Contact from '../components/Contact.astro'
+import Cursor from '../components/Cursor.astro'
+
+import '../styles/global.scss'
+---
+
+<html lang="en" class="is-scroll-blocked">
+  <head>
+    <meta charset="utf-8" />
+    <title>Ayushman (AYIKxD) | Embedded • Android • Web3 • AI</title>
+    <meta
+      name="description"
+      content="Portfolio of Ayushman (AYIKxD) - Building at the intersection of hardware and software. Embedded Linux, Android ROM, Web3, and AI."
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <meta
+      property="og:title"
+      content="Ayushman (AYIKxD) | Developer Portfolio"
+    />
+    <meta
+      property="og:description"
+      content="Embedded Systems • Android ROM • Web3 • AI Developer"
+    />
+    <meta property="og:type" content="website" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+
+  <body>
+    <Cursor />
+    <div class="site-wrapper js-wrapper">
+      <Header />
+      <main>
+        <Hero />
+        <About />
+        <Philosophy />
+        <TheLab />
+        <GitHubHeatmap />
+        <KernelLogs />
+        <Contact />
+      </main>
+    </div>
+
+    <div class="site-intro js-intro">
+      <div class="site-intro__logo js-intro-logo">AYIKxD</div>
+      <div class="site-intro__line js-intro-line"></div>
+    </div>
+  </body>
+
+  <script>
+    import Emitter from '../utils/Emitter'
+    import Ticker from '../utils/Ticker'
+    import { Parallax } from '../utils/Parallax'
+
+    import Lenis from 'lenis'
+    import { gsap } from 'gsap'
+    import { ScrollTrigger } from 'gsap/ScrollTrigger'
+    gsap.registerPlugin(ScrollTrigger)
+
+    declare global {
+      interface Window {
+        lenis: any
+      }
+    }
+
+    class Site {
+      lenis: any
+      wrapper: HTMLElement
+      intro: HTMLElement
+      introLogo: HTMLElement
+      introLine: HTMLElement
+
+      constructor() {
+        this.wrapper = document.querySelector('.js-wrapper')!
+        this.intro = document.querySelector('.js-intro')!
+        this.introLogo = document.querySelector('.js-intro-logo')!
+        this.introLine = document.querySelector('.js-intro-line')!
+
+        this.bindEvents()
+      }
+
+      init() {
+        this.initLenis()
+        Ticker.init()
+        this.initParallax()
+        this.playIntro()
+      }
+
+      bindEvents() {
+        window.addEventListener('resize', this.onResize.bind(this))
+        window.addEventListener('mousemove', this.onMouseMove.bind(this), {
+          passive: true,
+        })
+
+        // Intersection observer for sections
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              entry.target.dispatchEvent(
+                new CustomEvent('intersect', {
+                  detail: { isIntersecting: entry.isIntersecting },
+                }),
+              )
+            })
+          },
+          { threshold: 0 },
+        )
+
+        document.querySelectorAll('[data-intersect]').forEach((el) => {
+          observer.observe(el)
+        })
+      }
+
+      initLenis() {
+        const lenis = new Lenis({
+          duration: 1.4,
+          easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          smoothWheel: true,
+        })
+
+        lenis.on('scroll', ScrollTrigger.update)
+
+        gsap.ticker.add((time) => {
+          lenis.raf(time * 1000)
+        })
+
+        gsap.ticker.lagSmoothing(0)
+
+        window.lenis = lenis
+        this.lenis = lenis
+      }
+
+      initParallax() {
+        // Initialize after a brief delay to ensure DOM is ready
+        setTimeout(() => {
+          Parallax.init()
+        }, 100)
+      }
+
+      onResize() {
+        Emitter.emit('resize')
+      }
+
+      onMouseMove(e: MouseEvent) {
+        Emitter.emit('mousemove', e.clientX, e.clientY)
+      }
+
+      playIntro() {
+        const tl = gsap.timeline({
+          onComplete: () => {
+            Emitter.emit('introComplete')
+          },
+        })
+
+        // Logo fade in with scale
+        tl.to(this.introLogo, {
+          opacity: 1,
+          scale: 1,
+          duration: 0.8,
+          ease: 'power3.out',
+        })
+
+        // Line expand
+        tl.to(
+          this.introLine,
+          {
+            opacity: 1,
+            width: 120,
+            duration: 0.6,
+            ease: 'power3.inOut',
+          },
+          '-=0.3',
+        )
+
+        // Pause
+        tl.to({}, { duration: 0.4 })
+
+        // Logo pulse
+        tl.to(this.introLogo, {
+          scale: 1.05,
+          duration: 0.15,
+          yoyo: true,
+          repeat: 1,
+          ease: 'power2.inOut',
+        })
+
+        // Fade out intro
+        tl.to(this.intro, {
+          opacity: 0,
+          duration: 0.6,
+          ease: 'power2.inOut',
+        })
+
+        // Remove scroll block
+        tl.call(() => {
+          document.documentElement.classList.remove('is-scroll-blocked')
+          this.intro.remove()
+        })
+
+        // Show main wrapper
+        tl.to(
+          this.wrapper,
+          {
+            opacity: 1,
+            duration: 0.4,
+          },
+          '-=0.4',
+        )
+      }
+    }
+
+    const site = new Site()
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => site.init(), {
+        once: true,
+      })
+    } else {
+      site.init()
+    }
+  </script>
+</html>

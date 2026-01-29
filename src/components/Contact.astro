@@ -1,0 +1,515 @@
+---
+const socials = [
+  { name: 'GitHub', url: 'https://github.com/AYIKxD', handle: '@AYIKxD' },
+  {
+    name: 'LinkedIn',
+    url: 'https://linkedin.com/in/xyushmxn',
+    handle: '/in/xyushmxn',
+  },
+  { name: 'Twitter', url: 'https://twitter.com/xyushman', handle: '@xyushman' },
+  { name: 'Telegram', url: 'https://t.me/AYIK_xD', handle: '@AYIK_xD' },
+  { name: 'Reddit', url: 'https://reddit.com/u/AYIKxD', handle: 'u/AYIKxD' },
+  {
+    name: 'Instagram',
+    url: 'https://instagram.com/xyushmxn_b',
+    handle: '@xyushmxn_b',
+  },
+]
+---
+
+<section id="contact" class="s-contact" data-intersect>
+  <div class="s-contact__container">
+    <div class="s-contact__content">
+      <div class="section-badge js-badge">
+        <span class="badge-text">Connect</span>
+      </div>
+
+      <h2 class="s-contact__title js-title">
+        <span class="title-line">Let's Build</span>
+        <span class="title-line title-line--accent">Something</span>
+      </h2>
+
+      <p class="s-contact__desc js-desc">
+        Open for <strong>internships</strong> and <strong>
+          open-source collaborations
+        </strong>
+        in Embedded Linux, Android, Web3, or AI.
+      </p>
+
+      <a href="mailto:xyushmxn@gmail.com" class="email-cta js-email">
+        <span class="email-cta__text">xyushmxn@gmail.com</span>
+        <span class="email-cta__arrow">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12,5 19,12 12,19"></polyline>
+          </svg>
+        </span>
+        <span class="email-cta__glow"></span>
+      </a>
+
+      <div class="s-contact__socials js-socials">
+        {
+          socials.map((social) => (
+            <a href={social.url} class="social" target="_blank" rel="noopener">
+              <span class="social__name">{social.name}</span>
+              <span class="social__handle">{social.handle}</span>
+              <span class="social__arrow">↗</span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+
+    <div class="s-contact__visual js-visual">
+      <div class="pulse-container">
+        <div class="pulse pulse--1"></div>
+        <div class="pulse pulse--2"></div>
+        <div class="pulse pulse--3"></div>
+        <div class="pulse pulse--4"></div>
+        <div class="pulse-center"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="s-footer">
+  <div class="s-footer__container">
+    <div class="s-footer__left">
+      <span class="footer-logo">AYIKxD</span>
+      <span class="footer-sep">•</span>
+      <span class="footer-year">2026</span>
+    </div>
+    <div class="s-footer__right">
+      <span class="footer-tech">Built with Astro + GSAP</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  import { gsap } from 'gsap'
+  import { ScrollTrigger } from 'gsap/ScrollTrigger'
+  gsap.registerPlugin(ScrollTrigger)
+
+  class Contact {
+    el: HTMLElement
+    title: HTMLElement
+    email: HTMLElement
+
+    constructor() {
+      this.el = document.querySelector('.s-contact')!
+      this.title = this.el.querySelector('.js-title')!
+      this.email = this.el.querySelector('.js-email')!
+
+      this.initAnimations()
+    }
+
+    initAnimations() {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: this.el,
+          start: 'top 70%',
+        },
+      })
+
+      // Badge
+      const badge = this.el.querySelector('.js-badge')
+      if (badge) {
+        tl.fromTo(
+          badge,
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: 0.6 },
+        )
+      }
+
+      // Title lines
+      tl.fromTo(
+        this.title.querySelectorAll('.title-line'),
+        { y: 60, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.8, stagger: 0.15, ease: 'power3.out' },
+        '-=0.3',
+      )
+
+      // Description
+      const desc = this.el.querySelector('.js-desc')
+      if (desc) {
+        tl.fromTo(
+          desc,
+          { y: 20, opacity: 0 },
+          { y: 0, opacity: 0.7, duration: 0.6, ease: 'power2.out' },
+          '-=0.4',
+        )
+      }
+
+      // Email
+      tl.fromTo(
+        this.email,
+        { y: 30, opacity: 0, scale: 0.95 },
+        { y: 0, opacity: 1, scale: 1, duration: 0.8, ease: 'back.out(1.5)' },
+        '-=0.4',
+      )
+
+      // Socials
+      const socials = this.el.querySelector('.js-socials')
+      if (socials) {
+        const socialItems = socials.querySelectorAll('.social')
+        tl.fromTo(
+          socialItems,
+          { y: 20, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.5,
+            stagger: 0.08,
+            ease: 'power2.out',
+          },
+          '-=0.5',
+        )
+      }
+
+      // Visual
+      const visual = this.el.querySelector('.js-visual')
+      if (visual) {
+        tl.fromTo(
+          visual,
+          { opacity: 0, scale: 0.9 },
+          { opacity: 1, scale: 1, duration: 1, ease: 'power2.out' },
+          '-=0.8',
+        )
+      }
+    }
+  }
+
+  new Contact()
+</script>
+
+<style lang="scss">
+  .s-contact {
+    position: relative;
+    padding: 12rem 0 8rem;
+    overflow: hidden;
+  }
+
+  .s-contact__container {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+
+    @media (max-width: 1024px) {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+
+  .s-contact__content {
+    flex: 1;
+    max-width: 650px;
+  }
+
+  .section-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    padding: 0.625rem 1.25rem;
+    background: rgba(105, 117, 101, 0.15);
+    border: 1px solid rgba(105, 117, 101, 0.3);
+    border-radius: 100px;
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--color-text-main);
+  }
+
+  .s-contact__title {
+    font-family: var(--font-display);
+    font-size: clamp(3.5rem, 10vw, 6rem);
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 2rem;
+    color: var(--color-text-main);
+
+    .title-line {
+      display: block;
+      color: var(--color-text-main);
+      background: none;
+      -webkit-background-clip: unset;
+      -webkit-text-fill-color: unset;
+      background-clip: unset;
+
+      &--accent {
+        color: var(--color-accent);
+        background: none;
+        -webkit-text-fill-color: var(--color-accent);
+      }
+    }
+  }
+
+  .s-contact__desc {
+    color: var(--color-text-main);
+    opacity: 0.7;
+    font-size: 1.25rem;
+    line-height: 1.8;
+    margin-bottom: 3rem;
+
+    strong {
+      color: var(--color-text-main);
+      opacity: 1;
+      font-weight: 600;
+    }
+  }
+
+  .email-cta {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.5rem 2.5rem;
+    background: rgba(236, 223, 204, 0.05);
+    border: 1px solid rgba(236, 223, 204, 0.15);
+    border-radius: 4px;
+    margin-bottom: 4rem;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+
+    &:hover {
+      border-color: var(--color-accent);
+      transform: translateY(-4px);
+      background: rgba(105, 117, 101, 0.1);
+
+      .email-cta__arrow {
+        transform: translateX(4px);
+      }
+
+      .email-cta__glow {
+        opacity: 1;
+      }
+    }
+
+    &__text {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: var(--color-text-main);
+    }
+
+    &__arrow {
+      color: var(--color-text-main);
+      transition: transform 0.3s ease;
+    }
+
+    &__glow {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(
+        circle at center,
+        rgba(105, 117, 101, 0.15),
+        transparent 70%
+      );
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+    }
+  }
+
+  .s-contact__socials {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: 480px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .social {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(236, 223, 204, 0.1);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      border-color: var(--color-accent);
+      background: rgba(105, 117, 101, 0.1);
+
+      .social__arrow {
+        color: var(--color-text-main);
+        transform: translate(2px, -2px);
+      }
+    }
+
+    &__name {
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--color-text-main);
+    }
+
+    &__handle {
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      color: var(--color-text-main);
+      opacity: 0.4;
+
+      @media (max-width: 768px) {
+        display: none;
+      }
+    }
+
+    &__arrow {
+      color: var(--color-text-main);
+      opacity: 0.3;
+      transition: all 0.3s ease;
+    }
+  }
+
+  .s-contact__visual {
+    position: relative;
+    width: 350px;
+    height: 350px;
+    flex-shrink: 0;
+
+    @media (max-width: 1024px) {
+      display: none;
+    }
+  }
+
+  .pulse-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .pulse {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border-radius: 50%;
+    border: 1px solid;
+    transform: translate(-50%, -50%);
+    animation: pulse-expand 3s ease-in-out infinite;
+
+    &--1 {
+      width: 80px;
+      height: 80px;
+      border-color: rgba(236, 223, 204, 0.3);
+      animation-delay: 0s;
+    }
+    &--2 {
+      width: 160px;
+      height: 160px;
+      border-color: rgba(105, 117, 101, 0.2);
+      animation-delay: 0.5s;
+    }
+    &--3 {
+      width: 240px;
+      height: 240px;
+      border-color: rgba(236, 223, 204, 0.1);
+      animation-delay: 1s;
+    }
+    &--4 {
+      width: 320px;
+      height: 320px;
+      border-color: rgba(105, 117, 101, 0.05);
+      animation-delay: 1.5s;
+    }
+  }
+
+  .pulse-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    background: var(--color-text-main);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 20px rgba(236, 223, 204, 0.3);
+  }
+
+  @keyframes pulse-expand {
+    0%,
+    100% {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+      opacity: 0.3;
+      transform: translate(-50%, -50%) scale(1.08);
+    }
+  }
+
+  // Footer
+  .s-footer {
+    padding: 2.5rem 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .s-footer__container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+
+    @media (max-width: 480px) {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
+
+  .s-footer__left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+
+    .footer-logo {
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+
+    .footer-sep {
+      color: rgba(255, 255, 255, 0.2);
+    }
+
+    .footer-year {
+      color: var(--color-white);
+      opacity: 0.5;
+    }
+  }
+
+  .s-footer__right {
+    .footer-tech {
+      color: var(--color-white);
+      opacity: 0.4;
+      font-family: var(--font-display);
+      font-size: 0.8rem;
+    }
+  }
+</style>

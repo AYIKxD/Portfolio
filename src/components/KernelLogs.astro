@@ -1,0 +1,406 @@
+---
+const posts = [
+  {
+    id: 'vintf-debug',
+    title: 'Debugging VINTF Incompatibility on ARM64',
+    date: 'Jan 25, 2026',
+    category: 'Kernel',
+    excerpt:
+      "Building a custom ROM isn't just 'make bacon'. Here's how I solved a vendor interface conflict when porting Android 14 to an older device with incompatible vendor blobs.",
+    readTime: '8 min',
+    tags: ['Android', 'VINTF', 'ARM64', 'Debug'],
+  },
+  {
+    id: 'defi-hardware',
+    title: 'Why DeFi Needs Better Hardware Wallets',
+    date: 'Jan 10, 2026',
+    category: 'Web3',
+    excerpt:
+      'Analyzing the gap between secure hardware elements and user experience in current crypto wallets. The future lies in better HSM integration.',
+    readTime: '6 min',
+    tags: ['DeFi', 'Hardware', 'Security'],
+  },
+  {
+    id: 'edge-ai',
+    title: 'Running LLMs on Microcontrollers',
+    date: 'Dec 28, 2025',
+    category: 'AI',
+    excerpt:
+      "Experiments with TinyML and quantized models on resource-constrained devices. Spoiler: it's possible but requires serious optimization.",
+    readTime: '10 min',
+    tags: ['TinyML', 'Edge AI', 'MCU'],
+  },
+]
+---
+
+<section id="logs" class="s-logs" data-intersect>
+  <div class="s-logs__container">
+    <header class="s-logs__header">
+      <div class="section-badge js-fade">
+        <span class="badge-text">Notes</span>
+      </div>
+      <div class="title-wrapper">
+        <h2 class="section-title js-title">Kernel Logs</h2>
+      </div>
+      <p class="section-desc js-desc">
+        Thoughts on low-level engineering and decentralized finance. Documenting
+        the journey.
+      </p>
+    </header>
+
+    <div class="s-logs__list">
+      {
+        posts.map((post, index) => (
+          <article class="post js-post" data-index={index}>
+            <div class="post__number">{String(index + 1).padStart(2, '0')}</div>
+
+            <div class="post__content">
+              <div class="post__meta">
+                <span
+                  class={`post__category cat-${post.category.toLowerCase()}`}
+                >
+                  {post.category}
+                </span>
+                <span class="post__date">{post.date}</span>
+                <span class="post__read">{post.readTime}</span>
+              </div>
+
+              <h3 class="post__title">{post.title}</h3>
+              <p class="post__excerpt">{post.excerpt}</p>
+
+              <div class="post__footer">
+                <div class="post__tags">
+                  {post.tags.map((tag) => (
+                    <span class="tag">#{tag}</span>
+                  ))}
+                </div>
+                <a href={`/blog/${post.id}`} class="post__link">
+                  <span>Read more</span>
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12,5 19,12 12,19" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+
+            <div class="post__line" />
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<script>
+  import { gsap } from 'gsap'
+  import { ScrollTrigger } from 'gsap/ScrollTrigger'
+  import { Splitter } from '../utils/Splitter'
+  gsap.registerPlugin(ScrollTrigger)
+
+  class KernelLogs {
+    el: HTMLElement
+    title: HTMLElement
+    desc: HTMLElement
+    posts: NodeListOf<HTMLElement>
+    fade: HTMLElement
+
+    constructor() {
+      this.el = document.querySelector('.s-logs')!
+      this.title = this.el.querySelector('.js-title')!
+      this.desc = this.el.querySelector('.js-desc')!
+      this.posts = this.el.querySelectorAll('.js-post')
+      this.fade = this.el.querySelector('.js-fade')!
+
+      this.initAnimations()
+    }
+
+    initAnimations() {
+      // Split Title
+      Splitter.split({ element: this.title, type: 'chars' })
+      const chars = this.title.querySelectorAll('.split-char')
+
+      // Split Desc
+      Splitter.split({ element: this.desc, type: 'words' })
+      const words = this.desc.querySelectorAll('.split-word')
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: this.el,
+          start: 'top 75%',
+        },
+      })
+
+      // Badge Fade
+      tl.fromTo(
+        this.fade,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.6 },
+      )
+
+      // Title Reveal
+      tl.fromTo(
+        chars,
+        { y: 100, rotateX: -90, opacity: 0 },
+        {
+          y: 0,
+          rotateX: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.03,
+          ease: 'power3.out',
+        },
+        '-=0.4',
+      )
+
+      // Desc Reveal
+      tl.fromTo(
+        words,
+        { y: 20, opacity: 0 },
+        {
+          y: 0,
+          opacity: 0.6,
+          duration: 0.6,
+          stagger: 0.01,
+          ease: 'power2.out',
+        },
+        '-=0.6',
+      )
+
+      // Posts Reveal
+      this.posts.forEach((post, index) => {
+        gsap.fromTo(
+          post,
+          { x: index % 2 === 0 ? -40 : 40, opacity: 0 },
+          {
+            x: 0,
+            opacity: 1,
+            duration: 1,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: post,
+              start: 'top 85%',
+            },
+          },
+        )
+      })
+    }
+  }
+
+  new KernelLogs()
+</script>
+
+<style lang="scss">
+  .s-logs {
+    position: relative;
+    padding: 10rem 0;
+    background: var(--color-bg);
+  }
+
+  .s-logs__container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .s-logs__header {
+    text-align: center;
+    margin-bottom: 5rem;
+  }
+
+  .section-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    padding: 0.625rem 1.25rem;
+    background: rgba(105, 117, 101, 0.15); /* Olive */
+    border: 1px solid rgba(105, 117, 101, 0.3);
+    border-radius: 100px;
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--color-text-main);
+  }
+
+  .title-wrapper {
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    color: var(--color-text-main);
+    line-height: 1;
+
+    :global(.split-char) {
+      display: inline-block;
+      transform-style: preserve-3d;
+    }
+  }
+
+  .section-desc {
+    max-width: 500px;
+    margin: 0 auto;
+    color: var(--color-text-main);
+    opacity: 0.6;
+    font-size: 1.05rem;
+    line-height: 1.7;
+
+    :global(.split-word) {
+      opacity: 0;
+    }
+  }
+
+  .s-logs__list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .post {
+    position: relative;
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 2rem;
+    padding: 2.5rem 0;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    &__number {
+      font-family: var(--font-display);
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--color-accent);
+      opacity: 0.2;
+      line-height: 1;
+
+      @media (max-width: 768px) {
+        font-size: 2rem;
+      }
+    }
+
+    &__meta {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+    }
+
+    &__category {
+      padding: 0.25rem 0.625rem;
+      border-radius: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      background: rgba(105, 117, 101, 0.2);
+      color: var(--color-text-main);
+      border: 1px solid rgba(105, 117, 101, 0.3);
+    }
+
+    &__date,
+    &__read {
+      color: var(--color-text-main);
+      opacity: 0.5;
+    }
+
+    &__title {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--color-text-main);
+      margin-bottom: 0.875rem;
+      transition: color 0.3s ease;
+      cursor: pointer;
+
+      &:hover {
+        color: var(--color-accent);
+      }
+    }
+
+    &__excerpt {
+      color: var(--color-text-main);
+      opacity: 0.7;
+      font-size: 1rem;
+      line-height: 1.75;
+      margin-bottom: 1.25rem;
+    }
+
+    &__footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      @media (max-width: 480px) {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+    }
+
+    &__tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    &__link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--color-text-main);
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      transition: gap 0.3s ease;
+      opacity: 0.8;
+
+      &:hover {
+        gap: 0.75rem;
+        opacity: 1;
+      }
+    }
+
+    &__line {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(236, 223, 204, 0.1) 20%,
+        rgba(236, 223, 204, 0.1) 80%,
+        transparent
+      );
+    }
+  }
+
+  .tag {
+    color: var(--color-text-main);
+    opacity: 0.5;
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    transition:
+      opacity 0.3s ease,
+      color 0.3s ease;
+
+    &:hover {
+      opacity: 1;
+      color: var(--color-accent);
+    }
+  }
+</style>

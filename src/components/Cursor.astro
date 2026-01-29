@@ -1,0 +1,235 @@
+---
+
+---
+
+<div class="cursor-wrapper">
+  <!-- Main cursor dot -->
+  <div class="cursor js-cursor">
+    <div class="cursor__dot"></div>
+  </div>
+
+  <!-- Cursor ring -->
+  <div class="cursor-ring js-cursor-ring"></div>
+
+  <!-- Sparkle trail container -->
+  <div class="sparkle-container js-sparkles"></div>
+</div>
+
+<script>
+  import { gsap } from 'gsap'
+
+  class CustomCursor {
+    cursor: HTMLElement
+    ring: HTMLElement
+    sparkleContainer: HTMLElement
+    pos = { x: 0, y: 0 }
+    mouse = { x: 0, y: 0 }
+    speed = 0.15
+    sparklePool: HTMLElement[] = []
+    maxSparkles = 20
+    lastSparkleTime = 0
+    isHovering = false
+
+    constructor() {
+      this.cursor = document.querySelector('.js-cursor')!
+      this.ring = document.querySelector('.js-cursor-ring')!
+      this.sparkleContainer = document.querySelector('.js-sparkles')!
+
+      // Create sparkle pool
+      for (let i = 0; i < this.maxSparkles; i++) {
+        const sparkle = document.createElement('div')
+        sparkle.className = 'sparkle'
+        sparkle.innerHTML = '✦'
+        sparkle.style.opacity = '0'
+        this.sparkleContainer.appendChild(sparkle)
+        this.sparklePool.push(sparkle)
+      }
+
+      this.init()
+    }
+
+    init() {
+      // Hide default cursor
+      document.body.style.cursor = 'none'
+
+      // Track mouse
+      document.addEventListener('mousemove', (e) => {
+        this.mouse.x = e.clientX
+        this.mouse.y = e.clientY
+        this.createSparkle(e.clientX, e.clientY)
+      })
+
+      // Hover effects on interactive elements
+      const interactives = document.querySelectorAll(
+        'a, button, .btn, .project, .social, .email-cta, .phil-card',
+      )
+      interactives.forEach((el) => {
+        el.addEventListener('mouseenter', () => {
+          this.isHovering = true
+          gsap.to(this.ring, {
+            scale: 2,
+            borderColor: 'var(--color-accent)',
+            duration: 0.3,
+          })
+          gsap.to(this.cursor.querySelector('.cursor__dot'), {
+            scale: 0.5,
+            duration: 0.3,
+          })
+        })
+        el.addEventListener('mouseleave', () => {
+          this.isHovering = false
+          gsap.to(this.ring, {
+            scale: 1,
+            borderColor: 'var(--color-text-main)',
+            duration: 0.3,
+          })
+          gsap.to(this.cursor.querySelector('.cursor__dot'), {
+            scale: 1,
+            duration: 0.3,
+          })
+        })
+      })
+
+      // Click effect
+      document.addEventListener('mousedown', () => {
+        gsap.to(this.ring, { scale: 0.8, duration: 0.1 })
+        gsap.to(this.cursor.querySelector('.cursor__dot'), {
+          scale: 1.5,
+          duration: 0.1,
+        })
+      })
+      document.addEventListener('mouseup', () => {
+        gsap.to(this.ring, { scale: this.isHovering ? 2 : 1, duration: 0.2 })
+        gsap.to(this.cursor.querySelector('.cursor__dot'), {
+          scale: this.isHovering ? 0.5 : 1,
+          duration: 0.2,
+        })
+      })
+
+      // Animation loop
+      gsap.ticker.add(this.render.bind(this))
+    }
+
+    render() {
+      // Smooth follow
+      this.pos.x += (this.mouse.x - this.pos.x) * this.speed
+      this.pos.y += (this.mouse.y - this.pos.y) * this.speed
+
+      // Update cursor position
+      gsap.set(this.cursor, {
+        x: this.mouse.x,
+        y: this.mouse.y,
+      })
+
+      // Ring follows with delay
+      gsap.set(this.ring, {
+        x: this.pos.x,
+        y: this.pos.y,
+      })
+    }
+
+    createSparkle(x: number, y: number) {
+      const now = Date.now()
+      if (now - this.lastSparkleTime < 50) return // Throttle
+      this.lastSparkleTime = now
+
+      // Find available sparkle
+      const sparkle = this.sparklePool.find((s) => s.style.opacity === '0')
+      if (!sparkle) return
+
+      // Random offset
+      const offsetX = (Math.random() - 0.5) * 30
+      const offsetY = (Math.random() - 0.5) * 30
+
+      // Position and animate
+      gsap.set(sparkle, {
+        x: x + offsetX,
+        y: y + offsetY,
+        opacity: 1,
+        scale: Math.random() * 0.5 + 0.5,
+        rotation: Math.random() * 360,
+      })
+
+      gsap.to(sparkle, {
+        y: y + offsetY - 50,
+        opacity: 0,
+        scale: 0,
+        rotation: '+=180',
+        duration: 0.8,
+        ease: 'power2.out',
+      })
+    }
+  }
+
+  // Only init on desktop
+  if (window.matchMedia('(pointer: fine)').matches) {
+    new CustomCursor()
+  }
+</script>
+
+<style lang="scss">
+  .cursor-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+
+    @media (pointer: coarse) {
+      display: none;
+    }
+  }
+
+  .cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10001;
+    pointer-events: none;
+    mix-blend-mode: difference;
+  }
+
+  .cursor__dot {
+    width: 8px;
+    height: 8px;
+    background: var(--color-text-main);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .cursor-ring {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 40px;
+    height: 40px;
+    border: 1.5px solid var(--color-text-main);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10000;
+    pointer-events: none;
+    opacity: 0.6;
+    transition: border-color 0.3s ease;
+  }
+
+  .sparkle-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9998;
+    pointer-events: none;
+  }
+
+  .sparkle {
+    position: fixed;
+    font-size: 12px;
+    color: var(--color-accent);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    text-shadow: 0 0 10px var(--color-accent);
+  }
+</style>

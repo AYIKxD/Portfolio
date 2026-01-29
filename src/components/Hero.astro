@@ -1,0 +1,424 @@
+---
+import AWaves from './AWaves.astro'
+
+// We keep the structure simple for the JS to handle the splitting
+---
+
+<section class="s-hero" data-intersect>
+  <AWaves />
+
+  <div class="s-hero__content">
+    <div class="s-hero__tagline js-tagline">
+      <span class="tagline-bracket">[</span>
+      <span class="tagline-text js-tagline-text">Embedded Systems</span>
+      <span class="tagline-dot">•</span>
+      <span class="tagline-text js-tagline-text">Android ROM</span>
+      <span class="tagline-dot">•</span>
+      <span class="tagline-text js-tagline-text">Web3</span>
+      <span class="tagline-dot">•</span>
+      <span class="tagline-text js-tagline-text">AI</span>
+      <span class="tagline-bracket">]</span>
+    </div>
+
+    <h1 class="s-hero__title js-title">
+      <span class="title-word js-word">AYUSHMAN</span>
+    </h1>
+
+    <div class="s-hero__subtitle js-subtitle">
+      <div class="subtitle-reveal">
+        <span class="subtitle-prefix">aka</span>
+        <span class="subtitle-name">AYIKxD</span>
+      </div>
+    </div>
+
+    <div class="s-hero__desc js-desc">
+      Curious by nature, Engineer by choice
+    </div>
+
+    <div class="s-hero__cta js-cta">
+      <a href="#lab" class="btn btn--primary js-btn-primary">
+        <span class="btn__text">Explore The Lab</span>
+        <span class="btn__icon">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <polyline points="19,12 12,19 5,12"></polyline>
+          </svg>
+        </span>
+      </a>
+      <a href="#contact" class="btn btn--secondary js-btn-secondary">
+        <span class="btn__text">Let's Connect</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="s-hero__scroll js-scroll">
+    <span class="scroll-text">Scroll</span>
+    <span class="scroll-line"></span>
+  </div>
+</section>
+
+<script>
+  import { gsap } from 'gsap'
+  import { ScrollTrigger } from 'gsap/ScrollTrigger'
+  import Emitter from '../utils/Emitter'
+  import { Splitter } from '../utils/Splitter'
+
+  gsap.registerPlugin(ScrollTrigger)
+
+  class SHero {
+    el: HTMLElement
+    title: HTMLElement
+    word: HTMLElement
+    chars: NodeListOf<HTMLElement> | null
+    tagline: HTMLElement
+    subtitle: HTMLElement
+    desc: HTMLElement
+    cta: HTMLElement
+    scroll: HTMLElement
+
+    constructor() {
+      this.el = document.querySelector('.s-hero')!
+      this.title = this.el.querySelector('.js-title')!
+      this.word = this.el.querySelector('.js-word')!
+      this.tagline = this.el.querySelector('.js-tagline')!
+      this.subtitle = this.el.querySelector('.js-subtitle')!
+      this.desc = this.el.querySelector('.js-desc')!
+      this.cta = this.el.querySelector('.js-cta')!
+      this.scroll = this.el.querySelector('.js-scroll')!
+
+      this.chars = null
+
+      this.init()
+    }
+
+    init() {
+      // Split title into chars
+      this.chars = Splitter.split({ element: this.word, type: 'chars' })
+
+      // Split desc into words for stagger reveal
+      Splitter.split({ element: this.desc, type: 'words' })
+
+      this.bindEvents()
+    }
+
+    bindEvents() {
+      Emitter.once('introComplete', this.playIntro, this)
+
+      // Interactive magnetic/scramble effect on hover
+      this.chars?.forEach((char, i) => {
+        const originalText = char.textContent || ''
+
+        char.addEventListener('mouseenter', () => {
+          this.scrambleChar(char, originalText)
+        })
+      })
+
+      // Parallax effect on scroll
+      gsap.to(this.title, {
+        yPercent: 50,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: this.el,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true,
+        },
+      })
+    }
+
+    scrambleChar(char: HTMLElement, original: string) {
+      const chars = '!@#$%^&*()_+<>[]{}|;:,./?'
+      const tl = gsap.timeline()
+
+      // Random chars
+      tl.to(char, {
+        duration: 0.2,
+        onUpdate: () => {
+          if (Math.random() > 0.5) {
+            char.textContent = chars[Math.floor(Math.random() * chars.length)]
+          }
+        },
+        onComplete: () => {
+          char.textContent = original
+        },
+      })
+
+      // Visual bump
+      gsap.to(char, {
+        y: -10,
+        scale: 1.2,
+        color: 'var(--color-accent)',
+        duration: 0.3,
+        ease: 'back.out(2)',
+        yoyo: true,
+        repeat: 1,
+      })
+    }
+
+    playIntro() {
+      const tl = gsap.timeline()
+
+      // 1. Tagline Reveal (Typing effect style via opacity stagger)
+      const taglineParts = this.tagline.querySelectorAll('span')
+      tl.fromTo(
+        taglineParts,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.05, stagger: 0.03, ease: 'none' },
+      )
+
+      // 2. Title Reveal - Dramatic Scale + Blur + Char Stagger
+      if (this.chars) {
+        tl.fromTo(
+          this.chars,
+          {
+            y: 100,
+            opacity: 0,
+            rotateX: -90,
+            filter: 'blur(10px)',
+          },
+          {
+            y: 0,
+            opacity: 1,
+            rotateX: 0,
+            filter: 'blur(0px)',
+            duration: 1.2,
+            stagger: 0.05,
+            ease: 'power4.out',
+          },
+          '-=0.5',
+        )
+      }
+
+      // 3. Subtitle Reveal - Mask slide up
+      tl.fromTo(
+        this.subtitle.querySelector('.subtitle-reveal'),
+        { y: '100%' },
+        { y: '0%', duration: 0.8, ease: 'power3.out' },
+        '-=0.8',
+      )
+
+      // 4. Description Words Stagger
+      const descWords = this.desc.querySelectorAll('.split-word')
+      tl.fromTo(
+        descWords,
+        { y: 20, opacity: 0 },
+        {
+          y: 0,
+          opacity: 0.7,
+          duration: 0.6,
+          stagger: 0.02,
+          ease: 'power2.out',
+        },
+        '-=0.6',
+      )
+
+      // 5. CTA + Scroll
+      tl.fromTo(
+        [this.cta, this.scroll],
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' },
+        '-=0.4',
+      )
+    }
+  }
+
+  new SHero()
+</script>
+
+<style lang="scss">
+  .s-hero {
+    position: relative;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    background: var(--color-bg);
+  }
+
+  .s-hero__content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8rem 2rem 4rem;
+    text-align: center;
+  }
+
+  .s-hero__tagline {
+    margin-bottom: 2rem;
+    font-family: var(--font-display);
+    font-size: clamp(0.7rem, 1.5vw, 0.875rem);
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+
+    .tagline-bracket {
+      color: var(--color-accent);
+      font-weight: 300;
+    }
+    .tagline-text {
+      color: var(--color-text-main);
+      opacity: 0;
+    } // Opacity handled by GSAP
+    .tagline-dot {
+      color: var(--color-accent);
+      opacity: 0;
+    }
+  }
+
+  .s-hero__title {
+    margin: 0 0 1rem;
+    font-family: var(--font-display);
+    font-size: clamp(3.5rem, 15vw, 12rem);
+    font-weight: 700;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    perspective: 1000px;
+
+    .title-word {
+      display: inline-flex;
+      overflow: hidden; // Clean containment
+    }
+  }
+
+  // Styles applied by Splitter.js
+  :global(.split-char) {
+    transform-origin: bottom center;
+    will-change: transform, opacity, filter;
+    color: var(--color-text-main);
+    transition: color 0.3s ease;
+  }
+
+  .s-hero__subtitle {
+    margin-bottom: 2.5rem;
+    font-family: var(--font-display);
+    overflow: hidden; // For mask reveal
+
+    .subtitle-reveal {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .subtitle-prefix {
+      color: var(--color-text-main);
+      opacity: 0.5;
+      font-size: 1rem;
+      font-weight: 300;
+    }
+
+    .subtitle-name {
+      color: var(--color-accent);
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+    }
+  }
+
+  .s-hero__desc {
+    max-width: 550px;
+    margin-bottom: 3rem;
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    line-height: 1.6;
+    color: var(--color-text-main);
+
+    // Words are split, ensure spacing
+    :global(.split-word) {
+      opacity: 0; // Default state before animation
+    }
+  }
+
+  .s-hero__cta {
+    display: flex;
+    gap: 1.5rem;
+    opacity: 0; // Handled by intro
+
+    @media (max-width: 480px) {
+      flex-direction: column;
+      width: 100%;
+      max-width: 300px;
+    }
+  }
+
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1.25rem 2.5rem;
+    border-radius: 2px;
+    font-family: var(--font-display);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+
+    &--primary {
+      background: var(--color-text-main);
+      color: var(--color-bg);
+      border: 1px solid var(--color-text-main);
+
+      &:hover {
+        background: transparent;
+        color: var(--color-text-main);
+        transform: translateY(-3px);
+      }
+    }
+
+    &--secondary {
+      background: transparent;
+      border: 1px solid rgba(236, 223, 204, 0.2);
+      color: var(--color-text-main);
+
+      &:hover {
+        border-color: var(--color-accent);
+        color: var(--color-accent);
+        transform: translateY(-2px);
+      }
+    }
+  }
+
+  .s-hero__scroll {
+    position: absolute;
+    bottom: 3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    opacity: 0;
+
+    .scroll-text {
+      font-family: var(--font-display);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--color-text-main);
+      opacity: 0.4;
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 40px;
+      background: var(--color-text-main);
+      opacity: 0.3;
+    }
+
+    @media (max-width: 768px) {
+      display: none;
+    }
+  }
+</style>

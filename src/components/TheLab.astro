@@ -1,0 +1,531 @@
+---
+const projects = [
+  {
+    id: 'server-monitor',
+    title: 'Automated Server Infrastructure Monitor',
+    category: 'DevOps',
+    description:
+      'Custom monitoring system tracking remote SSH server build progress with real-time Telegram bot alerts for heavy compilations like Android ROMs.',
+    tags: ['Shell', 'Telegram API', 'Linux', 'SSH'],
+    status: 'Active',
+    link: 'https://github.com/AYIKxD',
+  },
+  {
+    id: 'arm64-recovery',
+    title: 'ARM64 Android Device Tree & Recovery',
+    category: 'Android',
+    description:
+      'Developed and compiled functional Android device tree and custom recovery (TWRP/OrangeFox) for ARM64 devices. Reverse-engineered proprietary blobs and debugged bootloops via serial logs.',
+    tags: ['C', 'Makefile', 'Device Tree', 'AOSP'],
+    status: 'Complete',
+    link: 'https://github.com/AYIKxD',
+  },
+  {
+    id: 'lpg-monitor',
+    title: 'Smart LPG Monitoring System (IoT)',
+    category: 'Embedded',
+    description:
+      'IoT safety solution using ESP32 with load cells to measure gas levels and servos for control, displaying real-time data on OLED screen.',
+    tags: ['ESP32', 'C++', 'PlatformIO', 'IoT'],
+    status: 'Complete',
+    link: 'https://github.com/AYIKxD',
+  },
+]
+---
+
+<section id="lab" class="s-lab" data-intersect>
+  <div class="s-lab__container">
+    <header class="s-lab__header">
+      <div class="section-badge js-fade">
+        <span class="badge-text">Projects</span>
+      </div>
+      <div class="title-wrapper">
+        <h2 class="section-title js-title">The Lab</h2>
+      </div>
+      <p class="section-desc js-desc">
+        Where hardware meets software. Experiments in embedded systems, Android
+        development, and decentralized technologies.
+      </p>
+    </header>
+
+    <div class="s-lab__grid">
+      {
+        projects.map((project, index) => (
+          <article class="project js-project" data-index={index}>
+            <div class="project__header">
+              <span
+                class={`project__category cat-${project.category.toLowerCase()}`}
+              >
+                {project.category}
+              </span>
+              <span
+                class={`project__status status-${project.status.toLowerCase().replace(' ', '-')}`}
+              >
+                {project.status}
+              </span>
+            </div>
+
+            <h3 class="project__title">{project.title}</h3>
+            <p class="project__desc">{project.description}</p>
+
+            <div class="project__tags">
+              {project.tags.map((tag) => (
+                <span class="tag">{tag}</span>
+              ))}
+            </div>
+
+            <a
+              href={project.link}
+              class="project__link"
+              target="_blank"
+              rel="noopener"
+            >
+              <span>View Project</span>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <line x1="7" y1="17" x2="17" y2="7" />
+                <polyline points="7,7 17,7 17,17" />
+              </svg>
+            </a>
+
+            <div class="project__glow" />
+            <div class="project__border" />
+          </article>
+        ))
+      }
+    </div>
+
+    <div class="s-lab__footer">
+      <a
+        href="https://github.com/AYIKxD"
+        class="github-btn js-fade"
+        target="_blank"
+        rel="noopener"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+          <path
+            d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
+          >
+          </path>
+        </svg>
+        <span>More on GitHub</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="s-lab__bg"></div>
+</section>
+
+<script>
+  import { gsap } from 'gsap'
+  import { ScrollTrigger } from 'gsap/ScrollTrigger'
+  import { Splitter } from '../utils/Splitter'
+  gsap.registerPlugin(ScrollTrigger)
+
+  class TheLab {
+    el: HTMLElement
+    title: HTMLElement
+    desc: HTMLElement
+    projects: NodeListOf<HTMLElement>
+    fades: NodeListOf<HTMLElement>
+
+    constructor() {
+      this.el = document.querySelector('.s-lab')!
+      this.title = this.el.querySelector('.js-title')!
+      this.desc = this.el.querySelector('.js-desc')!
+      this.projects = this.el.querySelectorAll('.js-project')
+      this.fades = this.el.querySelectorAll('.js-fade')
+
+      this.initAnimations()
+      this.bindEvents()
+    }
+
+    initAnimations() {
+      // Split Title
+      Splitter.split({ element: this.title, type: 'chars' })
+      const chars = this.title.querySelectorAll('.split-char')
+
+      // Split Desc
+      Splitter.split({ element: this.desc, type: 'words' })
+      const words = this.desc.querySelectorAll('.split-word')
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: this.el,
+          start: 'top 75%',
+        },
+      })
+
+      // Badge Fade
+      tl.fromTo(
+        this.fades[0],
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.6 },
+      )
+
+      // Title Reveal (Masked Chars)
+      tl.fromTo(
+        chars,
+        { y: 100, rotateX: -90, opacity: 0 },
+        {
+          y: 0,
+          rotateX: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.03,
+          ease: 'power3.out',
+        },
+        '-=0.4',
+      )
+
+      // Desc Reveal (Word Stagger)
+      tl.fromTo(
+        words,
+        { y: 20, opacity: 0 },
+        {
+          y: 0,
+          opacity: 0.7,
+          duration: 0.6,
+          stagger: 0.01,
+          ease: 'power2.out',
+        },
+        '-=0.6',
+      )
+
+      // Projects stagger
+      tl.fromTo(
+        this.projects,
+        { y: 60, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: 'power3.out',
+        },
+        '-=0.4',
+      )
+
+      // Footer fade
+      tl.fromTo(
+        this.fades[1],
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.6 },
+        '-=0.4',
+      )
+    }
+
+    bindEvents() {
+      this.projects.forEach((project) => {
+        project.addEventListener(
+          'mouseenter',
+          this.onProjectEnter.bind(this, project),
+        )
+        project.addEventListener(
+          'mouseleave',
+          this.onProjectLeave.bind(this, project),
+        )
+        project.addEventListener(
+          'mousemove',
+          this.onProjectMove.bind(this, project),
+        )
+      })
+    }
+
+    onProjectEnter(project: HTMLElement) {
+      gsap.to(project, {
+        y: -10,
+        scale: 1.02,
+        duration: 0.4,
+        ease: 'power2.out',
+      })
+    }
+
+    onProjectLeave(project: HTMLElement) {
+      gsap.to(project, {
+        y: 0,
+        scale: 1,
+        duration: 0.4,
+        ease: 'power2.out',
+      })
+    }
+
+    onProjectMove(project: HTMLElement, e: MouseEvent) {
+      const rect = project.getBoundingClientRect()
+      const x = e.clientX - rect.left
+      const y = e.clientY - rect.top
+
+      project.style.setProperty('--mouse-x', `${x}px`)
+      project.style.setProperty('--mouse-y', `${y}px`)
+    }
+  }
+
+  new TheLab()
+</script>
+
+<style lang="scss">
+  .s-lab {
+    position: relative;
+    padding: 10rem 0;
+    overflow: hidden;
+  }
+
+  .s-lab__container {
+    position: relative;
+    z-index: 2;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .s-lab__header {
+    text-align: center;
+    margin-bottom: 5rem;
+  }
+
+  .section-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    padding: 0.625rem 1.25rem;
+    background: rgba(105, 117, 101, 0.15); /* Olive low opacity */
+    border: 1px solid rgba(105, 117, 101, 0.3);
+    border-radius: 100px;
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--color-text-main);
+
+    .badge-icon {
+      font-size: 1rem;
+    }
+  }
+
+  .title-wrapper {
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 8vw, 5rem);
+    font-weight: 700;
+    color: var(--color-text-main);
+    line-height: 1;
+
+    /* Splitter char handling */
+    :global(.split-char) {
+      display: inline-block;
+      transform-style: preserve-3d;
+    }
+  }
+
+  .section-desc {
+    max-width: 600px;
+    margin: 0 auto;
+    color: var(--color-text-main);
+    opacity: 0.7; // Fallback
+    font-size: 1.125rem;
+    line-height: 1.8;
+
+    // GSAP opacity override
+    :global(.split-word) {
+      opacity: 0;
+    }
+  }
+
+  .s-lab__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-bottom: 4rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .project {
+    --mouse-x: 50%;
+    --mouse-y: 50%;
+
+    position: relative;
+    padding: 2.5rem;
+    background: linear-gradient(
+      145deg,
+      rgba(60, 61, 55, 0.4) 0%,
+      rgba(30, 32, 30, 0.8) 100%
+    );
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid rgba(236, 223, 204, 0.05);
+
+    &__border {
+      position: absolute;
+      inset: 0;
+      border-radius: 4px;
+      border: 1px solid rgba(236, 223, 204, 0.1);
+      pointer-events: none;
+      transition: border-color 0.3s ease;
+    }
+
+    &:hover &__border {
+      border-color: rgba(236, 223, 204, 0.3);
+    }
+
+    &__glow {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(
+        600px circle at var(--mouse-x) var(--mouse-y),
+        rgba(236, 223, 204, 0.03),
+        transparent 40%
+      );
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+    }
+
+    &:hover &__glow {
+      opacity: 1;
+    }
+
+    &__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+    }
+
+    &__category {
+      padding: 0.375rem 0.875rem;
+      border-radius: 2px;
+      font-family: var(--font-display);
+      font-size: 0.7rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      background: rgba(105, 117, 101, 0.2);
+      color: var(--color-text-main);
+      border: 1px solid rgba(105, 117, 101, 0.3);
+    }
+
+    &__status {
+      padding: 0.25rem 0.625rem;
+      border-radius: 2px;
+      font-family: var(--font-display);
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-text-main);
+      opacity: 0.6;
+      border: 1px solid rgba(236, 223, 204, 0.1);
+    }
+
+    &__title {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--color-text-main);
+      margin-bottom: 0.875rem;
+      transition: color 0.3s ease;
+    }
+
+    &:hover &__title {
+      color: #fff;
+    }
+
+    &__desc {
+      color: var(--color-text-main);
+      opacity: 0.7;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+
+    &__tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.75rem;
+    }
+
+    &__link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--color-text-main);
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: gap 0.3s ease;
+      opacity: 0.8;
+
+      &:hover {
+        gap: 0.75rem;
+        opacity: 1;
+      }
+    }
+  }
+
+  .tag {
+    padding: 0.25rem 0.625rem;
+    background: rgba(60, 61, 55, 0.5);
+    border-radius: 2px;
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    color: var(--color-text-main);
+    opacity: 0.6;
+    border: 1px solid rgba(236, 223, 204, 0.1);
+  }
+
+  .s-lab__footer {
+    text-align: center;
+  }
+
+  .github-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 1.125rem 2rem;
+    border: 1px solid rgba(236, 223, 204, 0.2);
+    border-radius: 2px;
+    color: var(--color-text-main);
+    opacity: 0.8;
+    font-family: var(--font-display);
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+
+    &:hover {
+      border-color: var(--color-accent);
+      color: var(--color-text-main);
+      opacity: 1;
+      background: rgba(105, 117, 101, 0.1);
+    }
+  }
+
+  .s-lab__bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+      linear-gradient(rgba(236, 223, 204, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(236, 223, 204, 0.03) 1px, transparent 1px);
+    background-size: 80px 80px;
+    z-index: 1;
+  }
+</style>

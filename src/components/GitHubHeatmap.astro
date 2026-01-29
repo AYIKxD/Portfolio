@@ -1,0 +1,438 @@
+---
+// Generate 6 months of contribution data server-side
+const weeks = 26
+const today = new Date()
+const contributions: { date: Date; count: number; level: number }[] = []
+
+// Generate realistic-looking random data
+for (let week = weeks - 1; week >= 0; week--) {
+  for (let day = 0; day < 7; day++) {
+    const date = new Date(today)
+    date.setDate(date.getDate() - (week * 7 + (6 - day)))
+
+    // Weighted random to create realistic patterns
+    let count = 0
+    const rand = Math.random()
+    const isWeekend = day === 0 || day === 6
+
+    if (rand > (isWeekend ? 0.7 : 0.4)) {
+      count = Math.floor(Math.random() * 8) + 1
+      if (rand > 0.9) count += Math.floor(Math.random() * 10)
+    }
+
+    contributions.push({ date, count, level: 0 })
+  }
+}
+
+// Calculate levels
+const maxCount = Math.max(...contributions.map((c) => c.count))
+contributions.forEach((c) => {
+  if (c.count > 0) {
+    c.level = Math.min(4, Math.ceil((c.count / maxCount) * 4))
+  }
+})
+
+// Calculate stats
+const total = contributions.reduce((sum, c) => sum + c.count, 0)
+let currentStreak = 0
+let longestStreak = 0
+let tempStreak = 0
+
+for (let i = contributions.length - 1; i >= 0; i--) {
+  if (contributions[i].count > 0) {
+    tempStreak++
+  } else {
+    longestStreak = Math.max(longestStreak, tempStreak)
+    tempStreak = 0
+  }
+}
+longestStreak = Math.max(longestStreak, tempStreak)
+
+// Current streak from end
+for (let i = contributions.length - 1; i >= 0; i--) {
+  if (contributions[i].count > 0) currentStreak++
+  else break
+}
+
+// Generate month labels
+const monthNames = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+]
+const monthLabels: { month: string; column: number }[] = []
+let lastMonth = -1
+
+contributions.forEach((c, i) => {
+  if (i % 7 === 0) {
+    const month = c.date.getMonth()
+    if (month !== lastMonth) {
+      monthLabels.push({
+        month: monthNames[month],
+        column: Math.floor(i / 7) + 1,
+      })
+      lastMonth = month
+    }
+  }
+})
+---
+
+<section class="s-github" data-intersect>
+  <div class="s-github__container">
+    <header class="s-github__header js-header">
+      <div class="section-badge">
+        <span class="badge-text">Activity</span>
+      </div>
+      <h2 class="section-title">Contribution Graph</h2>
+      <p class="section-desc">My coding journey, visualized.</p>
+    </header>
+
+    <div class="heatmap-wrapper">
+      <div class="heatmap-container">
+        <div class="heatmap-months">
+          {
+            monthLabels.map((m) => (
+              <span class="month-label" style={`grid-column: ${m.column}`}>
+                {m.month}
+              </span>
+            ))
+          }
+        </div>
+
+        <div class="heatmap-grid">
+          {
+            contributions.map((c) => (
+              <div
+                class="heatmap-cell"
+                data-level={c.level}
+                data-count={c.count}
+                data-date={c.date.toLocaleDateString('en-US', {
+                  weekday: 'short',
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                })}
+              />
+            ))
+          }
+        </div>
+
+        <div class="heatmap-legend">
+          <span class="legend-label">Less</span>
+          <div class="legend-levels">
+            <div class="legend-cell" data-level="0"></div>
+            <div class="legend-cell" data-level="1"></div>
+            <div class="legend-cell" data-level="2"></div>
+            <div class="legend-cell" data-level="3"></div>
+            <div class="legend-cell" data-level="4"></div>
+          </div>
+          <span class="legend-label">More</span>
+        </div>
+      </div>
+
+      <div class="heatmap-tooltip js-tooltip"></div>
+    </div>
+
+    <div class="heatmap-stats js-stats">
+      <div class="stat">
+        <span class="stat__value">{total}</span>
+        <span class="stat__label">Contributions (6 months)</span>
+      </div>
+      <div class="stat">
+        <span class="stat__value">{currentStreak}</span>
+        <span class="stat__label">Current Streak</span>
+      </div>
+      <div class="stat">
+        <span class="stat__value">{longestStreak}</span>
+        <span class="stat__label">Longest Streak</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { gsap } from 'gsap'
+  import { ScrollTrigger } from 'gsap/ScrollTrigger'
+  gsap.registerPlugin(ScrollTrigger)
+
+  class GitHubHeatmap {
+    el: HTMLElement
+    cells: NodeListOf<HTMLElement>
+    tooltip: HTMLElement
+    stats: HTMLElement
+
+    constructor() {
+      this.el = document.querySelector('.s-github')!
+      this.cells = this.el.querySelectorAll('.heatmap-cell')
+      this.tooltip = this.el.querySelector('.js-tooltip')!
+      this.stats = this.el.querySelector('.js-stats')!
+
+      this.init()
+    }
+
+    init() {
+      this.bindTooltips()
+      this.initAnimations()
+    }
+
+    bindTooltips() {
+      this.cells.forEach((cell) => {
+        cell.addEventListener('mouseenter', () => {
+          this.tooltip.innerHTML = `<strong>${cell.dataset.count} contributions</strong><br>${cell.dataset.date}`
+          this.tooltip.style.opacity = '1'
+        })
+
+        cell.addEventListener('mousemove', (e) => {
+          this.tooltip.style.left = `${e.clientX + 10}px`
+          this.tooltip.style.top = `${e.clientY + 10}px`
+        })
+
+        cell.addEventListener('mouseleave', () => {
+          this.tooltip.style.opacity = '0'
+        })
+      })
+    }
+
+    initAnimations() {
+      gsap.fromTo(
+        this.el.querySelector('.s-github__header'),
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          scrollTrigger: { trigger: this.el, start: 'top 70%' },
+        },
+      )
+
+      gsap.fromTo(
+        this.stats.children,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          stagger: 0.1,
+          scrollTrigger: { trigger: this.stats, start: 'top 80%' },
+        },
+      )
+    }
+  }
+
+  new GitHubHeatmap()
+</script>
+
+<style lang="scss">
+  .s-github {
+    position: relative;
+    padding: 8rem 0;
+    background: var(--color-bg);
+    overflow: hidden;
+  }
+
+  .s-github__container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .s-github__header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .section-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 0.5rem 1rem;
+    background: rgba(105, 117, 101, 0.15);
+    border: 1px solid rgba(105, 117, 101, 0.3);
+    border-radius: 100px;
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--color-text-main);
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    color: var(--color-text-main);
+    margin-bottom: 0.5rem;
+  }
+
+  .section-desc {
+    color: var(--color-text-main);
+    opacity: 0.6;
+    font-size: 1rem;
+  }
+
+  .heatmap-wrapper {
+    position: relative;
+    margin-bottom: 3rem;
+  }
+
+  .heatmap-container {
+    overflow-x: auto;
+    padding: 1rem 0;
+  }
+
+  .heatmap-months {
+    display: grid;
+    grid-template-columns: repeat(26, 14px);
+    gap: 3px;
+    margin-bottom: 0.5rem;
+    justify-content: center;
+
+    .month-label {
+      font-family: var(--font-display);
+      font-size: 0.65rem;
+      color: var(--color-text-main);
+      opacity: 0.5;
+    }
+  }
+
+  .heatmap-grid {
+    display: grid;
+    grid-template-columns: repeat(26, 14px);
+    grid-template-rows: repeat(7, 14px);
+    grid-auto-flow: column;
+    gap: 3px;
+    justify-content: center;
+  }
+
+  .heatmap-cell {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    background: rgba(236, 223, 204, 0.08);
+    transition: all 0.2s ease;
+    cursor: pointer;
+
+    &:hover {
+      transform: scale(1.4);
+      box-shadow: 0 0 12px var(--color-accent);
+    }
+
+    &[data-level='1'] {
+      background: rgba(105, 117, 101, 0.4);
+    }
+    &[data-level='2'] {
+      background: rgba(105, 117, 101, 0.6);
+    }
+    &[data-level='3'] {
+      background: rgba(105, 117, 101, 0.8);
+    }
+    &[data-level='4'] {
+      background: var(--color-accent);
+      box-shadow: 0 0 6px rgba(105, 117, 101, 0.4);
+    }
+  }
+
+  .heatmap-legend {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .legend-label {
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    color: var(--color-text-main);
+    opacity: 0.5;
+  }
+
+  .legend-levels {
+    display: flex;
+    gap: 3px;
+  }
+
+  .legend-cell {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    background: rgba(236, 223, 204, 0.08);
+
+    &[data-level='1'] {
+      background: rgba(105, 117, 101, 0.4);
+    }
+    &[data-level='2'] {
+      background: rgba(105, 117, 101, 0.6);
+    }
+    &[data-level='3'] {
+      background: rgba(105, 117, 101, 0.8);
+    }
+    &[data-level='4'] {
+      background: var(--color-accent);
+    }
+  }
+
+  .heatmap-tooltip {
+    position: fixed;
+    padding: 0.5rem 0.75rem;
+    background: rgba(30, 32, 30, 0.95);
+    border: 1px solid rgba(236, 223, 204, 0.2);
+    border-radius: 4px;
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    color: var(--color-text-main);
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+
+    strong {
+      color: var(--color-accent);
+    }
+  }
+
+  .heatmap-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    text-align: center;
+
+    @media (max-width: 600px) {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+  }
+
+  .stat {
+    padding: 1.5rem;
+    background: rgba(236, 223, 204, 0.03);
+    border: 1px solid rgba(236, 223, 204, 0.08);
+    border-radius: 4px;
+
+    &__value {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--color-accent);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    &__label {
+      font-size: 0.85rem;
+      color: var(--color-text-main);
+      opacity: 0.6;
+    }
+  }
+</style>

@@ -1,0 +1,18 @@
+/**
+ * Colors variables - Dark Earth Theme for AYIK
+ */
+@use 'sass:map';
+
+$theme-colors: (
+  default: (primary: #ECDFCC, // Cream
+    secondary: #1E201E, // Charcoal
+    shadow: #697565, // Olive
+    white: #ECDFCC, // Cream
+  ),
+
+  contrasted: (primary: #697565,
+    secondary: #1E201E,
+    shadow: #ECDFCC,
+    white: #ECDFCC,
+  ),
+);

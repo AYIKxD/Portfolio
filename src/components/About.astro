@@ -1,0 +1,668 @@
+---
+// About Section - Combines Tech Skills, Certificates, Honors, Education, Career Goals
+const techSkills = {
+  languages: ['C', 'C++', 'Python', 'Shell/Bash', 'JavaScript', 'TypeScript'],
+  systems: [
+    'Linux Kernel',
+    'AOSP',
+    'ARM64 Architecture',
+    'Device Trees',
+    'TWRP/Recovery',
+  ],
+  devops: ['Git', 'Docker', 'CI/CD', 'SSH', 'Telegram API'],
+  embedded: ['ESP32', 'Arduino', 'PlatformIO', 'IoT Protocols'],
+  web3: ['Solidity (Learning)', 'DeFi Concepts', 'Blockchain Fundamentals'],
+}
+
+const certificates = [
+  {
+    title: 'AWS Certified Cloud Practitioner',
+    issuer: 'Amazon Web Services',
+    date: '2025',
+    badge: 'AWS',
+  },
+]
+
+const honors = [
+  {
+    title: 'Winner — INNOTECH 2025',
+    org: 'KIET Annual Technical Fest',
+    year: 'Nov 2025',
+    desc: "Secured 1st place in technical innovation. Showcased a hardware/software integrated project judged by industry experts during KIET's flagship event.",
+  },
+  {
+    title: 'Best Startup Award',
+    org: 'TBI-KIET',
+    year: '2025',
+    desc: 'Awarded Best Startup and co-incubated by Technology Business Incubator (TBI) KIET for ROOMMATE, helping students find accommodation.',
+  },
+]
+
+const education = [
+  {
+    degree: 'B.Tech in Computer Science',
+    university: 'KIET Deemed-to-be University',
+    duration: '2024 - 2028',
+    focus: 'Delhi NCR',
+  },
+  {
+    degree: 'Intermediate (Class XII)',
+    university: "St. Mary's School",
+    duration: '2023',
+    focus: 'ISC Board • Science (PCM) + CS',
+  },
+  {
+    degree: 'High School (Class X)',
+    university: "St. Mary's School",
+    duration: '2021',
+    focus: 'ICSE Board • Science & Computer Applications',
+  },
+]
+
+const experience = [
+  {
+    role: 'CEO & Co-founder',
+    company: 'ROOMMATE',
+    duration: 'Present',
+    desc: 'Leading a startup helping students find accommodation near colleges and localities. solving the housing crisis for students.',
+  },
+]
+
+const careerGoals = [
+  'Immediate: Internships in Embedded Systems, Android Platform, or DevOps',
+  'Future: Transition to Blockchain Engineering or FinTech Systems',
+  'Build infrastructure for the next generation of finance',
+  'Philosophy: Understand the machine to build the economy',
+]
+---
+
+<section id="about" class="s-about">
+  <div class="s-about__container">
+    <!-- Section Header -->
+    <header class="s-about__header js-header">
+      <div class="section-badge">
+        <span class="badge-text">Profile</span>
+      </div>
+      <h2 class="section-title">About Me</h2>
+      <p class="section-desc">The stack, the story, and the ambition.</p>
+    </header>
+
+    <div class="s-about__grid">
+      <!-- Tech Skills -->
+      <div class="about-card about-card--skills js-card">
+        <h3 class="about-card__title">Tech Stack</h3>
+        <div class="skills-grid">
+          <div class="skill-category">
+            <span class="skill-label">Languages</span>
+            <div class="skill-tags">
+              {
+                techSkills.languages.map((skill) => (
+                  <span class="skill-tag">{skill}</span>
+                ))
+              }
+            </div>
+          </div>
+          <div class="skill-category">
+            <span class="skill-label">Systems</span>
+            <div class="skill-tags">
+              {
+                techSkills.systems.map((skill) => (
+                  <span class="skill-tag">{skill}</span>
+                ))
+              }
+            </div>
+          </div>
+          <div class="skill-category">
+            <span class="skill-label">DevOps</span>
+            <div class="skill-tags">
+              {
+                techSkills.devops.map((skill) => (
+                  <span class="skill-tag">{skill}</span>
+                ))
+              }
+            </div>
+          </div>
+          <div class="skill-category">
+            <span class="skill-label">Embedded</span>
+            <div class="skill-tags">
+              {
+                techSkills.embedded.map((skill) => (
+                  <span class="skill-tag">{skill}</span>
+                ))
+              }
+            </div>
+          </div>
+          <div class="skill-category">
+            <span class="skill-label">Web3</span>
+            <div class="skill-tags">
+              {
+                techSkills.web3.map((skill) => (
+                  <span class="skill-tag">{skill}</span>
+                ))
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Education -->
+      <div class="about-card about-card--education js-card">
+        <h3 class="about-card__title">Education</h3>
+        <div class="education-list">
+          {
+            education.map((edu) => (
+              <div class="education-item">
+                <div class="education-degree">{edu.degree}</div>
+                <div class="education-university">{edu.university}</div>
+                <div class="education-meta">
+                  <span class="education-duration">{edu.duration}</span>
+                  <span class="education-sep">•</span>
+                  <span class="education-focus">{edu.focus}</span>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+
+      <!-- Certificates -->
+      <div class="about-card about-card--certs js-card">
+        <h3 class="about-card__title">Certifications</h3>
+        <div class="certs-list">
+          {
+            certificates.map((cert) => (
+              <div class="cert-item">
+                <div class="cert-badge">{cert.badge}</div>
+                <div class="cert-info">
+                  <div class="cert-title">{cert.title}</div>
+                  <div class="cert-meta">
+                    {cert.issuer} • {cert.date}
+                  </div>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+
+      <!-- Experience (Startup) -->
+      <div class="about-card about-card--experience js-card">
+        <h3 class="about-card__title">Entrepreneurship</h3>
+        <div class="experience-list">
+          {
+            experience.map((exp) => (
+              <div class="experience-item">
+                <div class="experience-header">
+                  <span class="experience-role">{exp.role}</span>
+                  <span class="experience-company">{exp.company}</span>
+                </div>
+                <div class="experience-meta">{exp.duration}</div>
+                <p class="experience-desc">{exp.desc}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+
+      <!-- Honors -->
+      <div class="about-card about-card--honors js-card">
+        <h3 class="about-card__title">Honors & Awards</h3>
+        <div class="honors-list">
+          {
+            honors.map((honor) => (
+              <div class="honor-item">
+                <div class="honor-header">
+                  <span class="honor-title">{honor.title}</span>
+                  <span class="honor-meta">
+                    {honor.org} • {honor.year}
+                  </span>
+                </div>
+                <p class="honor-desc">{honor.desc}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+
+      <!-- Career Goals -->
+      <div class="about-card about-card--goals js-card">
+        <h3 class="about-card__title">Career Goals</h3>
+        <ul class="goals-list">
+          {
+            careerGoals.map((goal, i) => (
+              <li class="goal-item">
+                <span class="goal-number">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <span class="goal-text">{goal}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { gsap } from 'gsap'
+  import { ScrollTrigger } from 'gsap/ScrollTrigger'
+  gsap.registerPlugin(ScrollTrigger)
+
+  class AboutSection {
+    el: HTMLElement
+    cards: NodeListOf<HTMLElement>
+
+    constructor() {
+      this.el = document.querySelector('.s-about')!
+      this.cards = this.el.querySelectorAll('.js-card')
+      this.init()
+    }
+
+    init() {
+      // Header animation
+      gsap.fromTo(
+        this.el.querySelector('.js-header'),
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          scrollTrigger: { trigger: this.el, start: 'top 70%' },
+        },
+      )
+
+      // Cards stagger animation
+      this.cards.forEach((card, i) => {
+        gsap.fromTo(
+          card,
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            delay: i * 0.1,
+            scrollTrigger: { trigger: card, start: 'top 80%' },
+          },
+        )
+      })
+    }
+  }
+
+  new AboutSection()
+</script>
+
+<style lang="scss">
+  .s-about {
+    position: relative;
+    padding: 8rem 0;
+    background: var(--color-bg);
+  }
+
+  .s-about__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .s-about__header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .section-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 0.5rem 1rem;
+    background: rgba(105, 117, 101, 0.15);
+    border: 1px solid rgba(105, 117, 101, 0.3);
+    border-radius: 100px;
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--color-text-main);
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    color: var(--color-text-main);
+    margin-bottom: 0.5rem;
+  }
+
+  .section-desc {
+    color: var(--color-text-main);
+    opacity: 0.6;
+    font-size: 1rem;
+  }
+
+  .s-about__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+
+    @media (max-width: 900px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .about-card {
+    padding: 2rem;
+    background: rgba(236, 223, 204, 0.03);
+    border: 1px solid rgba(236, 223, 204, 0.08);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      border-color: rgba(105, 117, 101, 0.3);
+      background: rgba(236, 223, 204, 0.05);
+    }
+
+    &--skills {
+      grid-column: span 2;
+
+      @media (max-width: 900px) {
+        grid-column: span 1;
+      }
+    }
+
+    &--goals {
+      grid-column: span 2;
+
+      @media (max-width: 900px) {
+        grid-column: span 1;
+      }
+    }
+
+    &__title {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--color-text-main);
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(236, 223, 204, 0.1);
+    }
+  }
+
+  // Skills
+  .skills-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  .skill-category {
+    flex: 1;
+    min-width: 180px;
+  }
+
+  .skill-label {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-accent);
+    margin-bottom: 0.75rem;
+  }
+
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .skill-tag {
+    padding: 0.375rem 0.75rem;
+    background: rgba(105, 117, 101, 0.15);
+    border: 1px solid rgba(105, 117, 101, 0.25);
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-text-main);
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(105, 117, 101, 0.25);
+      border-color: var(--color-accent);
+    }
+  }
+
+  // Education
+  .education-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .education-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .education-degree {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-text-main);
+  }
+
+  .education-university {
+    font-size: 1rem;
+    color: var(--color-accent);
+  }
+
+  .education-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--color-text-main);
+    opacity: 0.7;
+  }
+
+  // Certificates
+  .certs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .cert-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .cert-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 153, 0, 0.2),
+      rgba(255, 153, 0, 0.1)
+    );
+    border: 1px solid rgba(255, 153, 0, 0.3);
+    border-radius: 8px;
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #ff9900;
+  }
+
+  .cert-info {
+    flex: 1;
+  }
+
+  .cert-title {
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--color-text-main);
+  }
+
+  .cert-meta {
+    font-size: 0.8rem;
+    color: var(--color-text-main);
+    opacity: 0.6;
+  }
+
+  // Experience
+  .about-card--experience {
+    grid-column: span 2;
+
+    @media (max-width: 900px) {
+      grid-column: span 1;
+    }
+  }
+
+  .experience-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .experience-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .experience-role {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-text-main);
+  }
+
+  .experience-company {
+    padding: 0.25rem 0.5rem;
+    background: rgba(105, 117, 101, 0.2);
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .experience-meta {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--color-text-main);
+    opacity: 0.5;
+    margin-bottom: 0.75rem;
+  }
+
+  .experience-desc {
+    font-size: 0.95rem;
+    color: var(--color-text-main);
+    opacity: 0.8;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  // Honors
+  .honors-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .honor-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(236, 223, 204, 0.06);
+
+    &:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+  }
+
+  .honor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+
+    @media (max-width: 600px) {
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+  }
+
+  .honor-title {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text-main);
+  }
+
+  .honor-meta {
+    font-size: 0.8rem;
+    color: var(--color-accent);
+    white-space: nowrap;
+  }
+
+  .honor-desc {
+    font-size: 0.9rem;
+    color: var(--color-text-main);
+    opacity: 0.7;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  // Goals
+  .goals-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    @media (max-width: 600px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .goal-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: rgba(105, 117, 101, 0.08);
+    border-radius: 6px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(105, 117, 101, 0.12);
+    }
+  }
+
+  .goal-number {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-accent);
+    opacity: 0.7;
+  }
+
+  .goal-text {
+    font-size: 0.9rem;
+    color: var(--color-text-main);
+    line-height: 1.5;
+  }
+</style>

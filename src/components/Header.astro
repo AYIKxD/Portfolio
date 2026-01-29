@@ -1,0 +1,242 @@
+---
+const navItems = [
+  { id: 'about', text: 'About' },
+  { id: 'lab', text: 'The Lab' },
+  { id: 'logs', text: 'Kernel Logs' },
+  { id: 'contact', text: 'Connect' },
+]
+---
+
+<header class="site-header js-header">
+  <div class="header__container">
+    <a href="/" class="header__logo">
+      <span class="logo-text">AYIK</span>
+      <span class="logo-accent">xD</span>
+    </a>
+
+    <nav class="header__nav">
+      <ul class="nav-list">
+        {
+          navItems.map((item) => (
+            <li class="nav-item">
+              <a href={`#${item.id}`} class="nav-link js-nav-link">
+                <span class="nav-text">{item.text}</span>
+                <span class="nav-line" />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <a href="/resume.pdf" class="header__resume" target="_blank" rel="noopener">
+      <span class="resume-text">Resume</span>
+      <svg
+        class="resume-icon"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="7,10 12,15 17,10"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3"></line>
+      </svg>
+    </a>
+  </div>
+</header>
+
+<script>
+  class Header {
+    el: HTMLElement
+    links: NodeListOf<HTMLElement>
+    isScrolled: boolean
+
+    constructor() {
+      this.el = document.querySelector('.js-header')!
+      this.links = this.el.querySelectorAll('.js-nav-link')
+      this.isScrolled = false
+
+      this.bindEvents()
+    }
+
+    bindEvents() {
+      this.links.forEach((link) => {
+        link.addEventListener('click', this.scrollToSection.bind(this))
+      })
+
+      window.addEventListener('scroll', this.onScroll.bind(this), {
+        passive: true,
+      })
+    }
+
+    scrollToSection(e: Event) {
+      e.preventDefault()
+      const target = e.currentTarget as HTMLAnchorElement
+      const id = target.getAttribute('href')
+
+      if (window.lenis) {
+        window.lenis.scrollTo(id, {
+          duration: 1.4,
+          easing: (t: number) =>
+            t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2,
+        })
+      }
+    }
+
+    onScroll() {
+      const scrolled = window.scrollY > 100
+
+      if (scrolled !== this.isScrolled) {
+        this.isScrolled = scrolled
+        this.el.classList.toggle('is-scrolled', scrolled)
+      }
+    }
+  }
+
+  new Header()
+</script>
+
+<style lang="scss">
+  .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    width: 100%;
+    padding: 2rem;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+
+    &.is-scrolled {
+      padding: 1.25rem 2rem;
+      background: rgba(10, 10, 15, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    @media (max-width: 768px) {
+      padding: 1.25rem;
+    }
+  }
+
+  .header__container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .header__logo {
+    display: flex;
+    align-items: baseline;
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-decoration: none;
+    gap: 0.1em;
+
+    .logo-text {
+      color: var(--color-text-main);
+    }
+
+    .logo-accent {
+      color: var(--color-accent);
+    }
+  }
+
+  .header__nav {
+    @media (max-width: 768px) {
+      display: none;
+    }
+  }
+
+  .nav-list {
+    display: flex;
+    gap: 3rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .nav-link {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--color-text-main);
+    opacity: 0.6;
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+
+    &:hover {
+      opacity: 1;
+
+      .nav-line {
+        width: 100%;
+        opacity: 1;
+      }
+    }
+
+    .nav-line {
+      position: absolute;
+      bottom: -6px;
+      width: 0;
+      height: 1px;
+      background: var(--color-accent);
+      border-radius: 1px;
+      transition:
+        width 0.3s ease,
+        opacity 0.3s ease;
+      opacity: 0;
+    }
+  }
+
+  .header__resume {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.875rem 1.5rem;
+    background: transparent;
+    border: 1px solid rgba(236, 223, 204, 0.1);
+    border-radius: 2px;
+    color: var(--color-text-main);
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    opacity: 0.8;
+
+    &:hover {
+      border-color: var(--color-accent);
+      color: var(--color-text-main);
+      opacity: 1;
+      background: rgba(105, 117, 101, 0.1);
+
+      .resume-icon {
+        transform: translateY(2px);
+      }
+    }
+
+    .resume-icon {
+      transition: transform 0.3s ease;
+    }
+
+    @media (max-width: 480px) {
+      padding: 0.625rem 0.875rem;
+
+      .resume-text {
+        display: none;
+      }
+    }
+  }
+</style>

@@ -1,0 +1,202 @@
+@import 'modern-normalize';
+
+/**
+ * Global Styles - Ayushman (AYIKxD) Portfolio
+ * Premium Earth Tone Theme
+ */
+
+// ====================================
+// CSS Custom Properties
+// ====================================
+
+:root {
+  // Colors - User Provided Palette
+  --color-bg: #1E201E; // Dark Charcoal
+  --color-bg-alt: #3C3D37; // Dark Olive Grey
+  --color-accent: #697565; // Muted Olive
+  --color-text-main: #ECDFCC; // Cream/Beige
+
+  // Mappings for component compatibility
+  --color-primary: #ECDFCC; // Main highlight (Cream)
+  --color-secondary: #1E201E; // Background (Charcoal)
+  --color-shadow: #697565; // Secondary accent (Olive)
+  --color-white: #ECDFCC; // Text color (Cream)
+
+  // Typography
+  --font-display: 'Outfit', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+
+
+// ====================================
+// Base
+// ====================================
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+
+  &.is-scroll-blocked {
+    overflow: hidden;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--color-bg);
+  color: var(--color-text-main);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: var(--color-accent);
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--color-text-main);
+}
+
+p {
+  margin: 0 0 1rem;
+  color: rgba(236, 223, 204, 0.8); // Cream with opacity
+}
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+// ====================================
+// Site Wrapper
+// ====================================
+
+.site-wrapper {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  opacity: 0;
+}
+
+// ====================================
+// Intro Animation
+// ====================================
+
+.site-intro {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg);
+
+  &__logo {
+    font-family: var(--font-display);
+    font-size: 4rem;
+    font-weight: 700;
+    color: var(--color-text-main);
+    opacity: 0;
+    transform: scale(0.8);
+
+    @media (max-width: 768px) {
+      font-size: 2.5rem;
+    }
+  }
+
+  &__line {
+    width: 0;
+    height: 1px;
+    margin-top: 1.5rem;
+    background: var(--color-accent);
+    opacity: 0;
+  }
+}
+
+// ====================================
+// Custom Scrollbar
+// ====================================
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-bg-alt);
+  border-radius: 4px;
+
+  &:hover {
+    background: var(--color-accent);
+  }
+}
+
+// ====================================
+// Selection
+// ====================================
+
+::selection {
+  background: var(--color-text-main);
+  color: var(--color-bg);
+}
+
+// ====================================
+// Utility
+// ====================================
+
+.u-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
